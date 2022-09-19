@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MenuButton, MenuItem, DropDownMenu, DropdownItem } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Table = () => {
 
@@ -6,8 +6,7 @@ const Table = () => {
     const [sortField, setSortField] = useState("");
     const [order, setOrder] = useState("asc");
     const [selectedCountryData, setSelectedCountryData] = useState([]);
-    const [countresList,setCountriesList]=useState([]);
-    const [selectedOption, setSelectedOption] = useState();
+    const [countresList, setCountriesList] = useState([]);
 
     useEffect(() => {
         fetch('http://universities.hipolabs.com/search?country=United+States')
@@ -21,10 +20,10 @@ const Table = () => {
 
     const columns = [
 
-        { label: "Name", accessor: "name"},
-        { label: "country", accessor: "country"},
-        { label: "Country Code", accessor: "alpha_two_code"},
-        { label: "Domains", accessor: "domains"}
+        { label: "Name", accessor: "name" },
+        { label: "country", accessor: "country" },
+        { label: "Country Code", accessor: "alpha_two_code" },
+        { label: "Domains", accessor: "domains" }
     ];
 
     //basic sort() function
@@ -36,25 +35,27 @@ const Table = () => {
     const handleSorting = (sortField, sortOrder) => {
         if (sortField) {
 
-            const sorted = [...tableData].sort((a, b) => {
+            const sorted = [...selectedCountryData].sort((a, b) => {
 
                 if (a[sortField] === null) return 1;
                 if (b[sortField] === null) return -1;
                 if (a[sortField] === null && b[sortField] === null) return 0;
 
                 return (
-                    a[sortField].toString().localeCompare(b[sortField].toString(), "en", {
+                    a[sortField].toString().localeCompare(b[sortField].toString(), {
                         numeric: true,
                     }) * (sortOrder === "asc" ? 1 : -1)
                 );
             });
 
-            setTableData(sorted);
+            setSelectedCountryData(sorted);
+
         }
     }
 
 
     const handleSortingChange = (accessor) => {
+        console.log(accessor);
         const sortOrder =
             accessor === sortField && order === "asc" ? "desc" : "asc";
         setSortField(accessor);
@@ -63,8 +64,10 @@ const Table = () => {
     }
 
     const handleCountryChange = (countryName) => {
-        // console.log(countryName);
+        if (countryName === 'Country')
+           return setSelectedCountryData(tableData);
         setSelectedCountryData(tableData.filter(c => c.country.includes(countryName)));
+
     }
 
     return (
@@ -76,13 +79,12 @@ const Table = () => {
                         <th key='name' onClick={() => handleSortingChange('name')}>Name</th>
                         <th key='country'>
                             <select
-                                value={selectedOption}
-                                onChange={e => handleCountryChange(e.target.value, setSelectedOption(e.target.value))}
+                                onChange={e => handleCountryChange(e.target.value)}
                             >
-                                {/* <option key='0' value='Country'>Country</option> */}
+                                <option key='0' value='Country'>Country</option>
                                 {countresList.map((item, index) => {
                                     return (
-                                        <option key={index} value={item} selected={index === 0}>{item}</option>
+                                        <option key={index} value={item}>{item}</option>
                                     )
                                 })}
                                 <option value="Other Country" >Other Country</option>
