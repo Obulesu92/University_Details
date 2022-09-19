@@ -9,7 +9,7 @@ const Table = () => {
     const [countresList, setCountriesList] = useState([]);
 
     useEffect(() => {
-        fetch('http://universities.hipolabs.com/search?country=United+States')
+        fetch('http://universities.hipolabs.com/search?country')
             .then((res) => res.json())
             .then((res) => {
                 setCountriesList([...new Set(res.map(item => item.country))])
